@@ -53,6 +53,13 @@ int main(int argc, char *argv[])
         char line[MAX_LINE_LENGTH];
         while (fgets(line, MAX_LINE_LENGTH, fp)) {
                 printf("%s", line);
+
+                // get the appropriate word
+
+                // link that word and this line together
+
+                // using that struct... add everything to a struct array!
+
         }
 
         fclose(fp);
