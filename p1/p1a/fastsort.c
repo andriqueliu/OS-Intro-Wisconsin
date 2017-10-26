@@ -22,6 +22,11 @@ void arg_validator(int argc, char *argv[]);
 void num_args_validator(int argc);
 void word_selection_validator(int argc, char *argv[]);
 
+
+
+
+
+
 int main(int argc, char *argv[])
 {
         printf("There are %d arguments\n", argc);
@@ -42,28 +47,9 @@ int main(int argc, char *argv[])
         // *(plox + 1) = 'e';
         // printf("%s\n", plox);
 
-        // First... open the file
-        FILE *fp = NULL;
-        fp = fopen(argv[1], "r");
-        if (fp == NULL) {
-                fprintf(stderr, "Error opening file\n");
-                exit(1);
-        }
-
-        char line[MAX_LINE_LENGTH];
-        while (fgets(line, MAX_LINE_LENGTH, fp)) {
-                printf("%s", line);
-
-                // get the appropriate word
-
-                // link that word and this line together
-
-                // using that struct... add everything to a struct array!
-
-        }
-
-        fclose(fp);
         
+        
+        // from that function, return the array of structs... malloc inside? or allocate from outside
 
 
         // get each individual line of that file...
@@ -110,7 +96,45 @@ void word_selection_validator(int argc, char *argv[]) {
         }
 }
 
+struct word_sentence_link *create_word_sentence_links(
+        char *file_name) {
 
+        FILE *fp = NULL;
+        fp = fopen(file_name, "r");
+        if (fp == NULL) {
+                fprintf(stderr, "Error opening file\n");
+                exit(1);
+        }
+
+        // dynamically allocate one more index in the word sentence link array
+        // for every line found
+
+        struct word_sentence_link *links = malloc(sizeof(struct word_sentence_link));
+        if (links == NULL) {
+                // some exit stuff
+        }
+
+        char line[MAX_LINE_LENGTH];
+        while (fgets(line, MAX_LINE_LENGTH, fp)) {
+                // check if the input line is too long... if it is, return an error
+
+                printf("%s", line);
+
+                // note: if line is just whitespace, use an empty string!
+
+                // get the appropriate word
+                // 
+
+                // link that word and this line together
+
+                // using that struct... add everything to a struct array!
+
+        }
+
+        fclose(fp);
+
+        return 
+}
 
 
 
