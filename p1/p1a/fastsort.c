@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#define MAX_LINE_LENGTH 128
+#define MAX_LINE_LENGTH 10
 
 #define EXIT_SUCCESS 0
 
@@ -11,10 +12,7 @@
 // this function will take the struct ptr, BUT will then
 // deref. and compare the appropriate STRINGs!!!
 
-struct word_sentence_link {
-        char *word;
-        char *sentence;
-};
+
 
 // Function prototypes
 
@@ -23,7 +21,9 @@ void num_args_validator(int argc);
 void word_selection_validator(int argc, char *argv[]);
 
 
+char **store_lines(char *file_name);
 
+void check_line_length(char *line);
 
 
 
@@ -36,10 +36,13 @@ int main(int argc, char *argv[])
 
         arg_validator(argc, argv);
 
-        printf("Test number: %ld\n", strtol("10", NULL, 10));
-        char *end;
-        printf("Test number: %ld\n", strtol("ff", &end, 10));
-        printf("Crap letter: %s\n", end);
+        // this is also ub... with strtol... you have a char pointer.
+        // strtol just modifies that char pointer to point at an already existing
+        // string!
+        // printf("Test number: %ld\n", strtol("10", NULL, 10));
+        // char *end;
+        // printf("Test number: %ld\n", strtol("ff", &end, 10));
+        // printf("Crap letter: %s\n", end);
 
         // // this is UB!
         // char *plox;
@@ -47,7 +50,7 @@ int main(int argc, char *argv[])
         // *(plox + 1) = 'e';
         // printf("%s\n", plox);
 
-        
+        char **lines = store_lines(argv[1]);
         
         // from that function, return the array of structs... malloc inside? or allocate from outside
 
@@ -72,13 +75,15 @@ void arg_validator(int argc, char *argv[])
         word_selection_validator(argc, argv);
 }
 
-void num_args_validator(int argc) {
+void num_args_validator(int argc)
+{
         if (argc > 3) {
                 exit(1);
         }
 }
 
-void word_selection_validator(int argc, char *argv[]) {
+void word_selection_validator(int argc, char *argv[])
+{
         if (argc == 3) {
                 char *word_selection = argv[2];
                 if (word_selection[0] != '-') {
@@ -96,9 +101,8 @@ void word_selection_validator(int argc, char *argv[]) {
         }
 }
 
-struct word_sentence_link *create_word_sentence_links(
-        char *file_name) {
-
+char **store_lines(char *file_name)
+{
         FILE *fp = NULL;
         fp = fopen(file_name, "r");
         if (fp == NULL) {
@@ -109,31 +113,53 @@ struct word_sentence_link *create_word_sentence_links(
         // dynamically allocate one more index in the word sentence link array
         // for every line found
 
-        struct word_sentence_link *links = malloc(sizeof(struct word_sentence_link));
-        if (links == NULL) {
+        char **lines = malloc(sizeof(char *));
+        if (lines == NULL) {
                 // some exit stuff
+                fprintf(stderr, "Memory error encountered\n");
         }
 
+        int i = 0;
+        // !!! You don't need to create that struct...
+        // just use an array of each line...
+        // when it comes time to compare, just deref. down to the appropriate word in the line
+
+        // example... so strnlen 
         char line[MAX_LINE_LENGTH];
-        while (fgets(line, MAX_LINE_LENGTH, fp)) {
-                // check if the input line is too long... if it is, return an error
+        while (fgets(line, MAX_LINE_LENGTH + 1, fp)) {
 
                 printf("%s", line);
+                printf("The length of the current line is... %zd\n", strnlen(line, MAX_LINE_LENGTH));
+                
+                check_line_length(line);
 
                 // note: if line is just whitespace, use an empty string!
 
+                // allocate space for the line!
+                // malloc space for the max line, then copy everything from the line into it!
                 // get the appropriate word
-                // 
+                *(lines + i) = malloc(MAX_LINE_LENGTH + 1); // maybe + 1?
+                strncpy(*(lines + i), line, MAX_LINE_LENGTH + 1);
 
-                // link that word and this line together
-
-                // using that struct... add everything to a struct array!
-
+                // realloc
+                i++;
         }
+        // the end of the array should be null termed
 
         fclose(fp);
 
-        return 
+        return lines;
+}
+
+void check_line_length(char *line)
+{
+        if (
+                (strnlen(line, MAX_LINE_LENGTH) == MAX_LINE_LENGTH) &&
+                (line[MAX_LINE_LENGTH - 1] != '\n')) {
+
+                fprintf(stderr, "Input line length exceeded limit\n");
+                exit(1);
+        }
 }
 
 
