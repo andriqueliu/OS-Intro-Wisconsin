@@ -21,7 +21,7 @@ void num_args_validator(int argc);
 void word_selection_validator(int argc, char *argv[]);
 
 
-char **store_lines(char *file_name, int *number_of_lines);
+char **store_lines(char *file_name, size_t *number_of_lines);
 
 void check_line_length(char *line);
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         // *(plox + 1) = 'e';
         // printf("%s\n", plox);
 
-        int number_of_lines = 1;
+        size_t number_of_lines = sizeof(char *);
 
         char *file_name = argv[1];
 
@@ -61,12 +61,12 @@ int main(int argc, char *argv[])
         
         // test and print everything out
 
-        printf("Here are some returned lines!\n");
-        int i = 0;
-        while (i < number_of_lines - 1) {
-                printf("%s", lines[i]);
-                i++;
-        }
+        // printf("Here are some returned lines!\n");
+        // int i = 0;
+        // while (i < number_of_lines - 1) {
+        //         // printf("%s", lines[i]);
+        //         i++;
+        // }
 
         // from that function, return the array of structs... malloc inside? or allocate from outside
 
@@ -119,10 +119,8 @@ void word_selection_validator(int argc, char *argv[])
         }
 }
 
-char **store_lines(char *file_name, int *number_of_lines)
+char **store_lines(char *file_name, size_t *number_of_lines)
 {
-        // printf("Testing number of lines: %d\n", *number_of_lines);
-
         FILE *fp = NULL;
         fp = fopen(file_name, "r");
         if (fp == NULL) {
@@ -130,45 +128,93 @@ char **store_lines(char *file_name, int *number_of_lines)
                 exit(1);
         }
 
-        // dynamically allocate one more index in the word sentence link array
-        // for every line found
-
         char **lines = malloc(sizeof(char *));
         if (lines == NULL) {
-                fprintf(stderr, "Memory error encountered\n");
-                exit(1);
+
         }
 
-        int line_i = 0;
-        // size_t curr_size = 1;
-        // !!! You don't need to create that struct...
-        // just use an array of each line...
-        // when it comes time to compare, just deref. down to the appropriate word in the line
+        int i = 0;
+        size_t num = sizeof(char *);
 
-        // example... so strnlen 
         char line[MAX_LINE_LENGTH];
         while (fgets(line, MAX_LINE_LENGTH, fp)) {
+                printf("%s", line);
 
+                // check line length
 
-                printf("The current line says... %s", line);
-                printf("The length of the current line is... %zd\n", strnlen(line, MAX_LINE_LENGTH));
-                
-                // int line_length = check_line_length(line);
-                check_line_length(line);
+                // copy this line into the collection
+                lines[i] = malloc(MAX_LINE_LENGTH * sizeof(char));
+                strncpy(lines[i], line, 5);
 
-                
+                *number_of_lines += sizeof(char *);
+                // num += sizeof(char *);
+
+                char **temp = realloc(lines, *number_of_lines);
+                // char **temp = realloc(lines, num);
+                if (temp == NULL) {
+
+                }
+                lines = temp;
+
+                i++;
+                // number_of_lines++;
         }
-        // the end of the array should be null termed
-
-        // lines[line_i] = '\0';
-        printf("I just not nulled\n");
-
-        printf("Gonna close\n");
-        fclose(fp);
-        printf("Closed\n");
-
-        return lines;
 }
+
+// char **store_lines(char *file_name, int *number_of_lines)
+// {
+//         // printf("Testing number of lines: %d\n", *number_of_lines);
+
+//         FILE *fp = NULL;
+//         fp = fopen(file_name, "r");
+//         if (fp == NULL) {
+//                 fprintf(stderr, "Error opening file\n");
+//                 exit(1);
+//         }
+
+//         // dynamically allocate one more index in the word sentence link array
+//         // for every line found
+        
+//         char **lines = malloc(sizeof(char *));
+//         if (lines == NULL) {
+//                 fprintf(stderr, "Memory error encountered\n");
+//                 exit(1);
+//         }
+//         printf("THERE'S A MALLOC\n");
+
+
+//         return NULL;
+
+//         int line_i = 0;
+//         // size_t curr_size = 1;
+//         // !!! You don't need to create that struct...
+//         // just use an array of each line...
+//         // when it comes time to compare, just deref. down to the appropriate word in the line
+
+//         // example... so strnlen 
+//         char line[MAX_LINE_LENGTH];
+//         while (fgets(line, MAX_LINE_LENGTH, fp)) {
+
+
+//                 printf("The current line says... %s", line);
+//                 printf("The length of the current line is... %zd\n", strnlen(line, MAX_LINE_LENGTH));
+                
+//                 // int line_length = check_line_length(line);
+//                 check_line_length(line);
+
+
+//         }
+//         // the end of the array should be null termed
+
+//         // lines[line_i] = '\0';
+//         printf("I just not nulled\n");
+
+//         printf("Gonna close\n");
+//         fclose(fp);
+//         printf("Closed\n");
+
+//         return lines;
+// }
 
 void check_line_length(char *line)
 {
