@@ -134,7 +134,6 @@ char **store_lines(char *file_name, int *i)
 
         }
 
-        // int i = 0;
         size_t number_of_lines = sizeof(char *);
 
         char line[MAX_LINE_LENGTH];
@@ -142,6 +141,7 @@ char **store_lines(char *file_name, int *i)
                 printf("this is the line we just got: %s", line);
 
                 // check line length
+                
 
                 // copy this line into the collection
                 lines[*i] = malloc(MAX_LINE_LENGTH * sizeof(char));
