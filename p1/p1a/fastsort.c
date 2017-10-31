@@ -21,13 +21,13 @@ void num_args_validator(int argc);
 void word_selection_validator(int argc, char *argv[]);
 
 
-char **store_lines(char *file_name, size_t *number_of_lines);
+char **store_lines(char *file_name, int *i);
 
 void check_line_length(char *line);
 
 
 
-void free_lines(char **lines, int number_of_lines);
+void free_lines(char **lines, int line_i);
 
 
 int main(int argc, char *argv[])
@@ -53,20 +53,21 @@ int main(int argc, char *argv[])
         // *(plox + 1) = 'e';
         // printf("%s\n", plox);
 
-        size_t number_of_lines = sizeof(char *);
+        int line_i = 0;
 
         char *file_name = argv[1];
 
-        char **lines = store_lines(file_name, &number_of_lines);
+        char **lines = store_lines(file_name, &line_i);
         
         // test and print everything out
 
-        // printf("Here are some returned lines!\n");
-        // int i = 0;
-        // while (i < number_of_lines - 1) {
-        //         // printf("%s", lines[i]);
-        //         i++;
-        // }
+        printf("Here are some returned lines!\n");
+        int i = 0;
+        while (i < line_i) {
+                printf("%s", lines[i]);
+                printf("%p\n", lines[i]);
+                i++;
+        }
 
         // from that function, return the array of structs... malloc inside? or allocate from outside
 
@@ -82,7 +83,7 @@ int main(int argc, char *argv[])
         // then, iterate across all of the structs and print out the sentence
 
 
-        // free_lines(lines, number_of_lines);
+        free_lines(lines, line_i);
 
         return EXIT_SUCCESS;
 }
@@ -119,7 +120,7 @@ void word_selection_validator(int argc, char *argv[])
         }
 }
 
-char **store_lines(char *file_name, size_t *number_of_lines)
+char **store_lines(char *file_name, int *i)
 {
         FILE *fp = NULL;
         fp = fopen(file_name, "r");
@@ -133,32 +134,35 @@ char **store_lines(char *file_name, size_t *number_of_lines)
 
         }
 
-        int i = 0;
-        size_t num = sizeof(char *);
+        // int i = 0;
+        size_t number_of_lines = sizeof(char *);
 
         char line[MAX_LINE_LENGTH];
         while (fgets(line, MAX_LINE_LENGTH, fp)) {
-                printf("%s", line);
+                printf("this is the line we just got: %s", line);
 
                 // check line length
 
                 // copy this line into the collection
-                lines[i] = malloc(MAX_LINE_LENGTH * sizeof(char));
-                strncpy(lines[i], line, 5);
+                lines[*i] = malloc(MAX_LINE_LENGTH * sizeof(char));
+                strncpy(lines[*i], line, MAX_LINE_LENGTH); // ???
 
-                *number_of_lines += sizeof(char *);
-                // num += sizeof(char *);
+                printf("testing... %s\n", lines[*i]);
 
-                char **temp = realloc(lines, *number_of_lines);
-                // char **temp = realloc(lines, num);
+                number_of_lines += sizeof(char *);
+
+                char **temp = realloc(lines, number_of_lines);
                 if (temp == NULL) {
 
                 }
                 lines = temp;
 
-                i++;
-                // number_of_lines++;
+                (*i)++;
         }
+
+        fclose(fp);
+
+        return lines;
 }
 
 // char **store_lines(char *file_name, int *number_of_lines)
@@ -233,11 +237,11 @@ void check_line_length(char *line)
 
 // iterate through the array, freeing each element as you go
 // finally, free the char array
-void free_lines(char **lines, int number_of_lines)
+void free_lines(char **lines, int line_i)
 {
         int i = 0;
 
-        while (i < number_of_lines - 1) {
+        while (i < line_i) {
                 free(lines[i]);
                 i++;
         }
