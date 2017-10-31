@@ -156,42 +156,7 @@ char **store_lines(char *file_name, int *number_of_lines)
                 // int line_length = check_line_length(line);
                 check_line_length(line);
 
-                // note: if line is just whitespace, use an empty string!
-
-                // allocate space for the line!
-                // malloc space for the max line, then copy everything from the line into it!
-                // get the appropriate word
-                // *(lines + i) = malloc(MAX_LINE_LENGTH + 1); // maybe + 1?
-                // strncpy(*(lines + i), line, MAX_LINE_LENGTH + 1);
-                lines[line_i] = malloc(MAX_LINE_LENGTH * sizeof(char)); // maybe + 1?
-
-                lines[line_i] = "hello\0";
-                printf("yo !!%s\n", lines[line_i]);
-
-
-                // strncpy(lines[line_i], line, MAX_LINE_LENGTH);
-                char *temp_line = malloc(sizeof(char) * MAX_LINE_LENGTH);
-                strncpy(temp_line, line, MAX_LINE_LENGTH);
-                strncpy(lines[line_i], temp_line, MAX_LINE_LENGTH);
-
-                printf("Just making sure the line was copied: %s\n", lines[line_i]);
-
-
-
-                // realloc
-                line_i++;
-                *number_of_lines += 1;
-
-                printf("Testing... %d\n", *number_of_lines);
-                char **temp_lines = realloc(lines, *number_of_lines);
-                if (temp_lines != NULL) {
-                        lines = temp_lines;
-                } else {
-                        fprintf(stderr, "Memory error encountered\n");
-                        exit(1);
-                }
-                printf("I just realloc\n");
-
+                
         }
         // the end of the array should be null termed
 
