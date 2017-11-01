@@ -33,8 +33,9 @@ void word_selection_validator(int argc, char *argv[]);
 char **store_lines(char *file_name, int *i);
 
 void check_line_length(char *line);
+int compare_lines(const void *line_a, const void *line_b);
 
-char *extract_nth_word(char *line);
+char *extract_nth_word(const void *line);
 
 void print_lines(char **lines, int line_i);
 
@@ -197,31 +198,35 @@ void check_line_length(char *line)
         }
 }
 
-// char **sort_lines(char **lines, int line_i)
-// {
+// Compares two lines
+int compare_lines(const void *line_a, const void *line_b)
+{
+        // so these point to the actual char *s... now make sure to fetch
+        // the correct element from each line
 
-// }
+        // so... you have a line!
 
-// // Compares two lines
-// int compare_lines(const void *a, const void *b)
-// {
-//         // so these point to the actual char *s... now make sure to fetch
-//         // the correct element from each line
+        // make a copy of the lines...
+        // char temp_a[MAX_LINE_LENGTH];
+        // char temp_b[MAX_LINE_LENGTH];
+        // strncpy(temp_a, a, MAX_LINE_LENGTH);
+        // ^ something similar...
+        // now, get the correct word...
 
-//         // so... you have a line!
+        // ^^^ that's being repeated... just use another method
+        char *word_a = extract_nth_word(line_a);
+        char *word_b = extract_nth_word(line_b);
 
-//         // make a copy of the lines...
-//         char temp_a[MAX_LINE_LENGTH];
-//         char temp_b[MAX_LINE_LENGTH];
-//         strncpy(temp_a, a, MAX_LINE_LENGTH);
-//         // ^ something similar...
-//         // now, get the correct word...
-
-//         // strcmp when you have the word
-// }
+        int result = strcmp(word_a, word_b);
+        
+        free(word_a);
+        free(word_b);
+        
+        return result;
+}
 
 // Extract the nth word from a line
-char *extract_nth_word(char *line)
+char *extract_nth_word(const void *line)
 {
         // Make a copy of the line
         char temp[MAX_LINE_LENGTH];
