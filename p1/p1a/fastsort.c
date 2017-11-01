@@ -47,11 +47,8 @@ int main(int argc, char *argv[])
         printf("max word length: %d\n", MAX_WORD_LENGTH);
 
 
-        // char *calloc_test = calloc(5, sizeof(char));
-        // printf("calloc_test %s\n", calloc_test);
-        // if (calloc_test[0] == '\0') {
-        //         printf("the first is empty\n");
-        // }
+        int result = compare_lines("abd", "abc");
+        printf("compare result: %d\n", result);
 
 
         arg_validator(argc, argv);
@@ -201,19 +198,6 @@ void check_line_length(char *line)
 // Compares two lines
 int compare_lines(const void *line_a, const void *line_b)
 {
-        // so these point to the actual char *s... now make sure to fetch
-        // the correct element from each line
-
-        // so... you have a line!
-
-        // make a copy of the lines...
-        // char temp_a[MAX_LINE_LENGTH];
-        // char temp_b[MAX_LINE_LENGTH];
-        // strncpy(temp_a, a, MAX_LINE_LENGTH);
-        // ^ something similar...
-        // now, get the correct word...
-
-        // ^^^ that's being repeated... just use another method
         char *word_a = extract_nth_word(line_a);
         char *word_b = extract_nth_word(line_b);
 
