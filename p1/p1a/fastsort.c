@@ -25,18 +25,13 @@ char **store_lines(char *file_name, int *i);
 
 void check_line_length(char *line);
 
-
+void print_lines(char **lines, int line_i);
 
 void free_lines(char **lines, int line_i);
 
 
 int main(int argc, char *argv[])
 {
-        printf("There are %d arguments\n", argc);
-        printf("First argument: %s\n", argv[0]);
-        printf("Second argument: %s\n", argv[1]);
-
-
         arg_validator(argc, argv);
 
         // this is also ub... with strtol... you have a char pointer.
@@ -59,15 +54,16 @@ int main(int argc, char *argv[])
 
         char **lines = store_lines(file_name, &line_i);
         
-        // test and print everything out
 
-        printf("Here are some returned lines!\n");
-        int i = 0;
-        while (i < line_i) {
-                printf("%s", lines[i]);
-                printf("%p\n", lines[i]);
-                i++;
-        }
+
+
+        
+
+
+        // now that you have the lines, put them into a function...
+        // use that function to sort through everything
+        // still, you need a function to pick out the correct word...
+
 
         // from that function, return the array of structs... malloc inside? or allocate from outside
 
@@ -82,6 +78,7 @@ int main(int argc, char *argv[])
 
         // then, iterate across all of the structs and print out the sentence
 
+        print_lines(lines, line_i);
 
         free_lines(lines, line_i);
 
@@ -233,19 +230,49 @@ void check_line_length(char *line)
         }
 }
 
+// char **sort_lines(char **lines, int line_i)
+// {
+
+// }
+
+// // Compares two lines
+// int compare_lines(const void *a, const void *b)
+// {
+//         // so these point to the actual char *s... now make sure to fetch
+//         // the correct element from each line
+
+//         // so... you have a line!
+
+//         // make a copy of the lines...
+//         char temp_a[MAX_LINE_LENGTH];
+//         char temp_b[MAX_LINE_LENGTH];
+//         strncpy(temp_a, a, MAX_LINE_LENGTH);
+//         // ^ something similar...
+//         // now, get the correct word...
+
+//         // strcmp when you have the word
+// }
 
 
-// iterate through the array, freeing each element as you go
-// finally, free the char array
+// Print out lines
+void print_lines(char **lines, int line_i)
+{
+        int i = 0;
+        while (i < line_i) {
+                printf("%s", lines[i]);
+                printf("%p\n", lines[i]);
+                i++;
+        }
+}
+
+// Frees memory allocated to hold lines
 void free_lines(char **lines, int line_i)
 {
         int i = 0;
-
         while (i < line_i) {
                 free(lines[i]);
                 i++;
         }
-
         free(lines);
 }
 
