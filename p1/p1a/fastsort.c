@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINE_LENGTH 50
+// Max length of a line
+// If all indices up to the last index are not occupied by null terminators,
+// then the second-to-last index must be occupied by a newline.
+#define MAX_LINE_LENGTH 128
 
 #define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
 
 // You need a struct? This struct contains a word, which will "hook" to its containing
 // sentence?
@@ -94,7 +98,7 @@ void arg_validator(int argc, char *argv[])
 void num_args_validator(int argc)
 {
         if (argc > 3) {
-                exit(1);
+                exit(EXIT_FAILURE);
         }
 }
 
@@ -103,7 +107,7 @@ void word_selection_validator(int argc, char *argv[])
         if (argc == 3) {
                 char *word_selection = argv[2];
                 if (word_selection[0] != '-') {
-                        exit(1);
+                        exit(EXIT_FAILURE);
                 }
                 
                 char *end;
@@ -123,34 +127,29 @@ char **store_lines(char *file_name, int *i)
         fp = fopen(file_name, "r");
         if (fp == NULL) {
                 fprintf(stderr, "Error opening file\n");
-                exit(1);
+                exit(EXIT_FAILURE);
         }
 
         char **lines = malloc(sizeof(char *));
         if (lines == NULL) {
-
+                fprintf(stderr, "Memory error encountered\n");
+                exit(EXIT_FAILURE);
         }
 
+        char line[MAX_LINE_LENGTH];
         size_t number_of_lines = sizeof(char *);
 
-        char line[MAX_LINE_LENGTH];
         while (fgets(line, MAX_LINE_LENGTH, fp)) {
-                printf("this is the line we just got: %s", line);
+                check_line_length(line);
 
-                // check line length
-                
-
-                // copy this line into the collection
                 lines[*i] = malloc(MAX_LINE_LENGTH * sizeof(char));
-                strncpy(lines[*i], line, MAX_LINE_LENGTH); // ???
-
-                printf("testing... %s\n", lines[*i]);
+                strncpy(lines[*i], line, MAX_LINE_LENGTH);
 
                 number_of_lines += sizeof(char *);
-
                 char **temp = realloc(lines, number_of_lines);
                 if (temp == NULL) {
-
+                        fprintf(stderr, "Memory error encountered while reallocating\n");
+                        exit(EXIT_FAILURE);
                 }
                 lines = temp;
 
@@ -162,71 +161,19 @@ char **store_lines(char *file_name, int *i)
         return lines;
 }
 
-// char **store_lines(char *file_name, int *number_of_lines)
-// {
-//         // printf("Testing number of lines: %d\n", *number_of_lines);
-
-//         FILE *fp = NULL;
-//         fp = fopen(file_name, "r");
-//         if (fp == NULL) {
-//                 fprintf(stderr, "Error opening file\n");
-//                 exit(1);
-//         }
-
-//         // dynamically allocate one more index in the word sentence link array
-//         // for every line found
-        
-//         char **lines = malloc(sizeof(char *));
-//         if (lines == NULL) {
-//                 fprintf(stderr, "Memory error encountered\n");
-//                 exit(1);
-//         }
-//         printf("THERE'S A MALLOC\n");
-
-
-//         return NULL;
-
-//         int line_i = 0;
-//         // size_t curr_size = 1;
-//         // !!! You don't need to create that struct...
-//         // just use an array of each line...
-//         // when it comes time to compare, just deref. down to the appropriate word in the line
-
-//         // example... so strnlen 
-//         char line[MAX_LINE_LENGTH];
-//         while (fgets(line, MAX_LINE_LENGTH, fp)) {
-
-
-//                 printf("The current line says... %s", line);
-//                 printf("The length of the current line is... %zd\n", strnlen(line, MAX_LINE_LENGTH));
-                
-//                 // int line_length = check_line_length(line);
-//                 check_line_length(line);
-
-
-//         }
-//         // the end of the array should be null termed
-
-//         // lines[line_i] = '\0';
-//         printf("I just not nulled\n");
-
-//         printf("Gonna close\n");
-//         fclose(fp);
-//         printf("Closed\n");
-
-//         return lines;
-// }
-
+// Verifies the length of the line
 void check_line_length(char *line)
 {
         int line_length = strnlen(line, MAX_LINE_LENGTH);
+
+        printf("line length: %d\n", line_length);
 
         if (
                 (line_length == (MAX_LINE_LENGTH - 1)) &&
                 (line[MAX_LINE_LENGTH - 2] != '\n')) {
 
                 fprintf(stderr, "Input line length exceeded limit\n");
-                exit(1);
+                exit(EXIT_FAILURE);
         }
 }
 
