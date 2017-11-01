@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         printf("max word length: %d\n", MAX_WORD_LENGTH);
 
 
-        int result = compare_lines("abd", "abc");
+        int result = compare_lines("a", "b");
         printf("compare result: %d\n", result);
 
 
@@ -79,7 +79,18 @@ int main(int argc, char *argv[])
         nth_word = 3; // 3rd word
         
 
+        // test...
+        printf("compare result test: %d\n", compare_lines(lines[0], lines[1]));
+        // test...
+        printf("compare result test: %d\n", compare_lines(lines[1], lines[2]));
 
+        printf("before sorting:\n");
+        print_lines(lines, line_i);
+
+
+        printf("sorting now\n");
+        size_t lines_length = sizeof(lines) / sizeof(char *);
+        qsort(lines, line_i, sizeof(char *), compare_lines);
         // now that you have the lines, put them into a function...
         // use that function to sort through everything
         // still, you need a function to pick out the correct word...
@@ -198,13 +209,23 @@ void check_line_length(char *line)
 // Compares two lines
 int compare_lines(const void *line_a, const void *line_b)
 {
+        printf("line a: %s\n", line_a);
+        printf("line a: %s\n", (char *) line_a);
+
+        const char **a = (const char **) line_a;
+        printf("line a: %s\n", *a);
+
         char *word_a = extract_nth_word(line_a);
         char *word_b = extract_nth_word(line_b);
+
+        printf("words being compared: %s %s\n", word_a, word_b);
 
         int result = strcmp(word_a, word_b);
         
         free(word_a);
         free(word_b);
+
+        printf("result %d\n", result);
         
         return result;
 }
@@ -249,14 +270,13 @@ void print_lines(char **lines, int line_i)
         while (i < line_i) {
                 printf("line: %s", lines[i]);
 
-                // testing extracting word...
-                char *temp_word = extract_nth_word(lines[i]);
-                printf("temp word! %s\n", temp_word);
-                if (temp_word[0] == '\0') {
-                        printf("null terminator at the first here\n");
-                }
-
-                free(temp_word);
+                // // testing extracting word...
+                // char *temp_word = extract_nth_word(lines[i]);
+                // printf("temp word! %s\n", temp_word);
+                // if (temp_word[0] == '\0') {
+                //         printf("null terminator at the first here\n");
+                // }
+                // free(temp_word);
 
                 i++;
         }
