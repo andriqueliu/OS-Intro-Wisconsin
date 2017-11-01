@@ -6,6 +6,9 @@
 // If all indices up to the last index are not occupied by null terminators,
 // then the second-to-last index must be occupied by a newline.
 #define MAX_LINE_LENGTH 128
+#define MAX_WORD_LENGTH MAX_LINE_LENGTH - 2
+
+
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
@@ -20,6 +23,8 @@
 
 // Function prototypes
 
+int nth_word;
+
 void arg_validator(int argc, char *argv[]);
 void num_args_validator(int argc);
 void word_selection_validator(int argc, char *argv[]);
@@ -29,6 +34,8 @@ char **store_lines(char *file_name, int *i);
 
 void check_line_length(char *line);
 
+char *extract_nth_word(char *line);
+
 void print_lines(char **lines, int line_i);
 
 void free_lines(char **lines, int line_i);
@@ -36,6 +43,16 @@ void free_lines(char **lines, int line_i);
 
 int main(int argc, char *argv[])
 {
+        printf("max word length: %d\n", MAX_WORD_LENGTH);
+
+
+        // char *calloc_test = calloc(5, sizeof(char));
+        // printf("calloc_test %s\n", calloc_test);
+        // if (calloc_test[0] == '\0') {
+        //         printf("the first is empty\n");
+        // }
+
+
         arg_validator(argc, argv);
 
         // this is also ub... with strtol... you have a char pointer.
@@ -60,7 +77,8 @@ int main(int argc, char *argv[])
         
 
 
-
+        // test...
+        nth_word = 3; // 3rd word
         
 
 
@@ -142,6 +160,8 @@ char **store_lines(char *file_name, int *i)
         while (fgets(line, MAX_LINE_LENGTH, fp)) {
                 check_line_length(line);
 
+                // if the line is all whitespace, just make this "line" one space at the first index
+
                 lines[*i] = malloc(MAX_LINE_LENGTH * sizeof(char));
                 strncpy(lines[*i], line, MAX_LINE_LENGTH);
 
@@ -200,14 +220,55 @@ void check_line_length(char *line)
 //         // strcmp when you have the word
 // }
 
+// Extract the nth word from a line
+char *extract_nth_word(char *line)
+{
+        // Make a copy of the line
+        char temp[MAX_LINE_LENGTH];
+        strncpy(temp, line, MAX_LINE_LENGTH);
+
+        // Zero-initialize char array in the event no valid tokens
+        // are found
+        char *temp_word = calloc(MAX_WORD_LENGTH, sizeof(char));
+        if (temp_word == NULL) {
+                fprintf(stderr, "Memory error encountered\n");
+                exit(EXIT_FAILURE);
+        }
+
+        int i = -1;
+        char *token = strtok(temp, " \n");
+
+        while (token != NULL) {
+                i++;
+
+                strncpy(temp_word, token, MAX_WORD_LENGTH);
+                if (i == (nth_word - 1)) {
+                        return temp_word;
+                }
+
+                token = strtok(NULL, " \n");
+        }
+
+        return temp_word;
+}
+
 
 // Print out lines
 void print_lines(char **lines, int line_i)
 {
         int i = 0;
         while (i < line_i) {
-                printf("%s", lines[i]);
-                printf("%p\n", lines[i]);
+                printf("line: %s", lines[i]);
+
+                // testing extracting word...
+                char *temp_word = extract_nth_word(lines[i]);
+                printf("temp word! %s\n", temp_word);
+                if (temp_word[0] == '\0') {
+                        printf("null terminator at the first here\n");
+                }
+
+                free(temp_word);
+
                 i++;
         }
 }
@@ -222,4 +283,3 @@ void free_lines(char **lines, int line_i)
         }
         free(lines);
 }
-
