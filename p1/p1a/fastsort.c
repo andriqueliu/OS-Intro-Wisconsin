@@ -1,3 +1,14 @@
+/*
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Note: empty lines are compared 
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,109 +17,46 @@
 // If all indices up to the last index are not occupied by null terminators,
 // then the second-to-last index must be occupied by a newline.
 #define MAX_LINE_LENGTH 128
+// Max length of a word
+// A word must leave two indices available for a newline followed by a
+// null terminator
 #define MAX_WORD_LENGTH MAX_LINE_LENGTH - 2
-
-
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 
-// You need a struct? This struct contains a word, which will "hook" to its containing
-// sentence?
-// idea... so the qsort takes a sorting function...
-// this function will take the struct ptr, BUT will then
-// deref. and compare the appropriate STRINGs!!!
-
-
-
-// Function prototypes
-
+// Determine nth word of each line to use for comparison (1-indexed)
 int nth_word;
 
+// Function prototypes
 void arg_validator(int argc, char *argv[]);
 void num_args_validator(int argc);
 void word_selection_validator(int argc, char *argv[]);
-
-
 char **store_lines(char *file_name, int *i);
-
 void check_line_length(char *line);
 int compare_lines(const void *line_a, const void *line_b);
-
 char *extract_nth_word(const void *line);
-
 void print_lines(char **lines, int line_i);
-
 void free_lines(char **lines, int line_i);
-
 
 int main(int argc, char *argv[])
 {
-        printf("max word length: %d\n", MAX_WORD_LENGTH);
-
-
-        // int result = compare_lines("a", "b");
-        // printf("compare result: %d\n", result);
-
-
-        arg_validator(argc, argv);
-
-        // this is also ub... with strtol... you have a char pointer.
-        // strtol just modifies that char pointer to point at an already existing
-        // string!
-        // printf("Test number: %ld\n", strtol("10", NULL, 10));
-        // char *end;
-        // printf("Test number: %ld\n", strtol("ff", &end, 10));
-        // printf("Crap letter: %s\n", end);
-
-        // // this is UB!
-        // char *plox;
-        // *plox = 'h';
-        // *(plox + 1) = 'e';
-        // printf("%s\n", plox);
-
         int line_i = 0;
 
-        char *file_name = argv[1];
-
-        char **lines = store_lines(file_name, &line_i);
+        arg_validator(argc, argv);
+        char **lines = store_lines(argv[1], &line_i);
         
 
+        // todo: get correct nth word
+        // todo: figure out empty line handling
 
         // test...
         nth_word = 3; // 3rd word
         
-
-        // // test...
-        // printf("compare result test: %d\n", compare_lines(lines[0], lines[1]));
-        // // test...
-        // printf("compare result test: %d\n", compare_lines(lines[1], lines[2]));
-
-        printf("before sorting:\n");
+        printf("Before sorting:\n");
         print_lines(lines, line_i);
-
-
-        printf("sorting now\n");
-        size_t lines_length = sizeof(lines) / sizeof(char *);
         qsort(lines, line_i, sizeof(char *), compare_lines);
-        // now that you have the lines, put them into a function...
-        // use that function to sort through everything
-        // still, you need a function to pick out the correct word...
-
-
-        // from that function, return the array of structs... malloc inside? or allocate from outside
-
-
-        // get each individual line of that file...
-
-        // get the selected word of each line
-
-        // link each selected word with containing line
-
-        // compare the structs... deref. and get the appropriate data (word)
-
-        // then, iterate across all of the structs and print out the sentence
-
+        printf("After sorting:\n");
         print_lines(lines, line_i);
 
         free_lines(lines, line_i);
@@ -116,12 +64,14 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
 }
 
+// Validate program arguments
 void arg_validator(int argc, char *argv[])
 {
         num_args_validator(argc);
         word_selection_validator(argc, argv);
 }
 
+// Validate the number of arguments given to the program
 void num_args_validator(int argc)
 {
         if (argc > 3) {
@@ -129,6 +79,7 @@ void num_args_validator(int argc)
         }
 }
 
+// Validate and set the word selection argument
 void word_selection_validator(int argc, char *argv[])
 {
         if (argc == 3) {
@@ -148,6 +99,7 @@ void word_selection_validator(int argc, char *argv[])
         }
 }
 
+// Store file lines in a char array
 char **store_lines(char *file_name, int *i)
 {
         FILE *fp = NULL;
@@ -215,14 +167,10 @@ int compare_lines(const void *a, const void *b)
         char *word_a = extract_nth_word(line_a);
         char *word_b = extract_nth_word(line_b);
 
-        printf("words being compared: %s %s\n", word_a, word_b);
-
         int result = strcmp(word_a, word_b);
         
         free(word_a);
         free(word_b);
-
-        printf("result %d\n", result);
         
         return result;
 }
@@ -260,21 +208,12 @@ char *extract_nth_word(const void *line)
 }
 
 
-// Print out lines
+// Print out stored lines
 void print_lines(char **lines, int line_i)
 {
         int i = 0;
         while (i < line_i) {
                 printf("line: %s", lines[i]);
-
-                // // testing extracting word...
-                // char *temp_word = extract_nth_word(lines[i]);
-                // printf("temp word! %s\n", temp_word);
-                // if (temp_word[0] == '\0') {
-                //         printf("null terminator at the first here\n");
-                // }
-                // free(temp_word);
-
                 i++;
         }
 }
