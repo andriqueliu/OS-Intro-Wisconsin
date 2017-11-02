@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
         printf("max word length: %d\n", MAX_WORD_LENGTH);
 
 
-        int result = compare_lines("a", "b");
-        printf("compare result: %d\n", result);
+        // int result = compare_lines("a", "b");
+        // printf("compare result: %d\n", result);
 
 
         arg_validator(argc, argv);
@@ -79,10 +79,10 @@ int main(int argc, char *argv[])
         nth_word = 3; // 3rd word
         
 
-        // test...
-        printf("compare result test: %d\n", compare_lines(lines[0], lines[1]));
-        // test...
-        printf("compare result test: %d\n", compare_lines(lines[1], lines[2]));
+        // // test...
+        // printf("compare result test: %d\n", compare_lines(lines[0], lines[1]));
+        // // test...
+        // printf("compare result test: %d\n", compare_lines(lines[1], lines[2]));
 
         printf("before sorting:\n");
         print_lines(lines, line_i);
@@ -207,13 +207,10 @@ void check_line_length(char *line)
 }
 
 // Compares two lines
-int compare_lines(const void *line_a, const void *line_b)
+int compare_lines(const void *a, const void *b)
 {
-        printf("line a: %s\n", line_a);
-        printf("line a: %s\n", (char *) line_a);
-
-        const char **a = (const char **) line_a;
-        printf("line a: %s\n", *a);
+        char *line_a = *(char **) a;
+        char *line_b = *(char **) b;
 
         char *word_a = extract_nth_word(line_a);
         char *word_b = extract_nth_word(line_b);
