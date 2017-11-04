@@ -21,6 +21,8 @@
 // null terminator
 #define MAX_WORD_LENGTH MAX_LINE_LENGTH - 2
 
+#define BASE_TEN 10
+
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 
@@ -44,21 +46,21 @@ int main(int argc, char *argv[])
         int line_i = 0;
 
         arg_validator(argc, argv);
-        char **lines = store_lines(argv[1], &line_i);
+        // char **lines = store_lines(argv[1], &line_i);
         
 
         // todo: get correct nth word
 
         // test...
-        nth_word = 3; // 3rd word
+        // nth_word = 3; // 3rd word
         
-        printf("Before sorting:\n");
-        print_lines(lines, line_i);
-        qsort(lines, line_i, sizeof(char *), compare_lines);
-        printf("After sorting:\n");
-        print_lines(lines, line_i);
+        // printf("Before sorting:\n");
+        // print_lines(lines, line_i);
+        // qsort(lines, line_i, sizeof(char *), compare_lines);
+        // printf("After sorting:\n");
+        // print_lines(lines, line_i);
 
-        free_lines(lines, line_i);
+        // free_lines(lines, line_i);
 
         return EXIT_SUCCESS;
 }
@@ -85,16 +87,27 @@ void word_selection_validator(int argc, char *argv[])
         if (argc == 3) {
                 char *word_selection = argv[2];
                 if (word_selection[0] != '-') {
-                        fprintf(stderr, "Word selection formatter missing a dash\n");
+                        fprintf(stderr, "Word selection value missing a dash\n");
                         exit(EXIT_FAILURE);
                 }
                 
-                char *end;
+                char *end = NULL; // Points to the start of the first non-valid char
+                                  // (not a number) in word_selection.
+                                  // This char pointer is modified in strtol
                 long word_selection_value;
-                word_selection_value = strtol((word_selection + 1), &end, 10);
 
-                printf("%ld\n", word_selection_value);
-                printf("%s\n", end);
+                // Start at one index later to skip the '-'
+                word_selection_value = strtol((word_selection + 1), &end, BASE_TEN);
+
+                if ((end == '\0') && (word_selection + 1) != '\0') {
+                        printf("Word selection value: %ld\n", word_selection_value);
+                        nth_word = word_selection_value;
+                } else {
+                        fprintf(stderr, "Word selection value contains invalid chars\n");
+                        printf("end: %s\n", end);
+                        printf("%ld\n", word_selection_value);
+                        exit(EXIT_FAILURE);
+                }
         }
 }
 
