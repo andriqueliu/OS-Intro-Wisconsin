@@ -1,12 +1,11 @@
 /*
+ * fastsort.c
  * 
+ * Sorts lines of a specified file. The nth word of each line is selected
+ * by the user for lexicographical comparison.
  * 
- * 
- * 
- * 
- * 
- * Note: empty lines are compared 
- * 
+ * Note: lines that only contain spaces and that end in newlines will
+ * yield a word only composed of null bytes for comparison.
  */
 
 #include <stdio.h>
@@ -120,8 +119,6 @@ char **store_lines(char *file_name, int *i)
 
         while (fgets(line, MAX_LINE_LENGTH, fp)) {
                 check_line_length(line);
-
-                // if the line is all whitespace, just make this "line" one space at the first index
 
                 lines[*i] = malloc(MAX_LINE_LENGTH * sizeof(char));
                 strncpy(lines[*i], line, MAX_LINE_LENGTH);
