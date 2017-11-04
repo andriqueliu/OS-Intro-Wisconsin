@@ -40,6 +40,7 @@ void free_lines(char **lines, int line_i);
 
 int main(int argc, char *argv[])
 {
+        // Indicate which line of the file is being inspected
         int line_i = 0;
 
         arg_validator(argc, argv);
@@ -47,7 +48,6 @@ int main(int argc, char *argv[])
         
 
         // todo: get correct nth word
-        // todo: figure out empty line handling
 
         // test...
         nth_word = 3; // 3rd word
@@ -74,6 +74,7 @@ void arg_validator(int argc, char *argv[])
 void num_args_validator(int argc)
 {
         if (argc > 3) {
+                fprintf(stderr, "No more than 3 arguments allowed\n");
                 exit(EXIT_FAILURE);
         }
 }
@@ -84,6 +85,7 @@ void word_selection_validator(int argc, char *argv[])
         if (argc == 3) {
                 char *word_selection = argv[2];
                 if (word_selection[0] != '-') {
+                        fprintf(stderr, "Word selection formatter missing a dash\n");
                         exit(EXIT_FAILURE);
                 }
                 
@@ -93,8 +95,6 @@ void word_selection_validator(int argc, char *argv[])
 
                 printf("%ld\n", word_selection_value);
                 printf("%s\n", end);
-
-
         }
 }
 
@@ -144,7 +144,7 @@ void check_line_length(char *line)
 {
         int line_length = strnlen(line, MAX_LINE_LENGTH);
 
-        printf("line length: %d\n", line_length);
+        // printf("line length: %d\n", line_length);
 
         if (
                 (line_length == (MAX_LINE_LENGTH - 1)) &&
