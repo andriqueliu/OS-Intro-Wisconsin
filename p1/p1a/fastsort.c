@@ -27,7 +27,8 @@
 #define EXIT_FAILURE 1
 
 // Determine nth word of each line to use for comparison (1-indexed)
-int nth_word;
+// By default, the first word is inspected for comparison
+int nth_word = 1;
 
 // Function prototypes
 void arg_validator(int argc, char *argv[]);
@@ -46,21 +47,15 @@ int main(int argc, char *argv[])
         int line_i = 0;
 
         arg_validator(argc, argv);
-        // char **lines = store_lines(argv[1], &line_i);
+        char **lines = store_lines(argv[1], &line_i);
         
+        printf("Before sorting:\n");
+        print_lines(lines, line_i);
+        qsort(lines, line_i, sizeof(char *), compare_lines);
+        printf("After sorting:\n");
+        print_lines(lines, line_i);
 
-        // todo: get correct nth word
-
-        // test...
-        // nth_word = 3; // 3rd word
-        
-        // printf("Before sorting:\n");
-        // print_lines(lines, line_i);
-        // qsort(lines, line_i, sizeof(char *), compare_lines);
-        // printf("After sorting:\n");
-        // print_lines(lines, line_i);
-
-        // free_lines(lines, line_i);
+        free_lines(lines, line_i);
 
         return EXIT_SUCCESS;
 }
@@ -99,13 +94,12 @@ void word_selection_validator(int argc, char *argv[])
                 // Start at one index later to skip the '-'
                 word_selection_value = strtol((word_selection + 1), &end, BASE_TEN);
 
-                if ((end == '\0') && (word_selection + 1) != '\0') {
-                        printf("Word selection value: %ld\n", word_selection_value);
+                if ((word_selection[1] != '\0') && (end[0]) == '\0') {
+                        printf("Testing: word selection value: %ld\n", word_selection_value);
+
                         nth_word = word_selection_value;
                 } else {
                         fprintf(stderr, "Word selection value contains invalid chars\n");
-                        printf("end: %s\n", end);
-                        printf("%ld\n", word_selection_value);
                         exit(EXIT_FAILURE);
                 }
         }
