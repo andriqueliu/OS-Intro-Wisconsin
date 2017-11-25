@@ -43,192 +43,192 @@ void free_lines(char **lines, int line_i);
 
 int main(int argc, char *argv[])
 {
-        // Indicate which line of the file is being inspected
-        int line_i = 0;
+	// Indicate which line of the file is being inspected
+	int line_i = 0;
 
-        arg_validator(argc, argv);
-        char **lines = store_lines(argv[1], &line_i);
-        
-        printf("Before sorting:\n");
-        print_lines(lines, line_i);
-        qsort(lines, line_i, sizeof(char *), compare_lines);
-        printf("After sorting:\n");
-        print_lines(lines, line_i);
+	arg_validator(argc, argv);
+	char **lines = store_lines(argv[1], &line_i);
+	
+	printf("Before sorting:\n");
+	print_lines(lines, line_i);
+	qsort(lines, line_i, sizeof(char *), compare_lines);
+	printf("After sorting:\n");
+	print_lines(lines, line_i);
 
-        free_lines(lines, line_i);
+	free_lines(lines, line_i);
 
-        return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 // Validate program arguments
 void arg_validator(int argc, char *argv[])
 {
-        num_args_validator(argc);
-        word_selection_validator(argc, argv);
+	num_args_validator(argc);
+	word_selection_validator(argc, argv);
 }
 
 // Validate the number of arguments given to the program
 void num_args_validator(int argc)
 {
-        if (argc > 3) {
-                fprintf(stderr, "No more than 3 arguments allowed\n");
-                exit(EXIT_FAILURE);
-        }
+	if (argc > 3) {
+		fprintf(stderr, "No more than 3 arguments allowed\n");
+		exit(EXIT_FAILURE);
+	}
 }
 
 // Validate and set the word selection argument
 void word_selection_validator(int argc, char *argv[])
 {
-        if (argc == 3) {
-                char *word_selection = argv[2];
-                if (word_selection[0] != '-') {
-                        fprintf(stderr, "Word selection value missing a dash\n");
-                        exit(EXIT_FAILURE);
-                }
-                
-                char *end = NULL; // Points to the start of the first non-valid char
-                                  // (not a number) in word_selection.
-                                  // This char pointer is modified in strtol
-                long word_selection_value;
+	if (argc == 3) {
+		char *word_selection = argv[2];
+		if (word_selection[0] != '-') {
+			fprintf(stderr, "Word selection value missing a dash\n");
+			exit(EXIT_FAILURE);
+		}
+		
+		char *end = NULL; // Points to the start of the first non-valid char
+				  // (not a number) in word_selection.
+				  // This char pointer is modified in strtol
+		long word_selection_value;
 
-                // Start at one index later to skip the '-'
-                word_selection_value = strtol((word_selection + 1), &end, BASE_TEN);
+		// Start at one index later to skip the '-'
+		word_selection_value = strtol((word_selection + 1), &end, BASE_TEN);
 
-                if ((word_selection[1] != '\0') && (end[0]) == '\0') {
-                        printf("Testing: word selection value: %ld\n", word_selection_value);
+		if ((word_selection[1] != '\0') && (end[0]) == '\0') {
+			printf("Testing: word selection value: %ld\n", word_selection_value);
 
-                        nth_word = word_selection_value;
-                } else {
-                        fprintf(stderr, "Word selection value contains invalid chars\n");
-                        exit(EXIT_FAILURE);
-                }
-        }
+			nth_word = word_selection_value;
+		} else {
+			fprintf(stderr, "Word selection value contains invalid chars\n");
+			exit(EXIT_FAILURE);
+		}
+	}
 }
 
 // Store file lines in a char array
 char **store_lines(char *file_name, int *i)
 {
-        FILE *fp = NULL;
-        fp = fopen(file_name, "r");
-        if (fp == NULL) {
-                fprintf(stderr, "Error opening file\n");
-                exit(EXIT_FAILURE);
-        }
+	FILE *fp = NULL;
+	fp = fopen(file_name, "r");
+	if (fp == NULL) {
+		fprintf(stderr, "Error opening file\n");
+		exit(EXIT_FAILURE);
+	}
 
-        char **lines = malloc(sizeof(char *));
-        if (lines == NULL) {
-                fprintf(stderr, "Memory error encountered\n");
-                exit(EXIT_FAILURE);
-        }
+	char **lines = malloc(sizeof(char *));
+	if (lines == NULL) {
+		fprintf(stderr, "Memory error encountered\n");
+		exit(EXIT_FAILURE);
+	}
 
-        char line[MAX_LINE_LENGTH];
-        size_t number_of_lines = sizeof(char *);
+	char line[MAX_LINE_LENGTH];
+	size_t number_of_lines = sizeof(char *);
 
-        while (fgets(line, MAX_LINE_LENGTH, fp)) {
-                check_line_length(line);
+	while (fgets(line, MAX_LINE_LENGTH, fp)) {
+		check_line_length(line);
 
-                lines[*i] = malloc(MAX_LINE_LENGTH * sizeof(char));
-                strncpy(lines[*i], line, MAX_LINE_LENGTH);
+		lines[*i] = malloc(MAX_LINE_LENGTH * sizeof(char));
+		strncpy(lines[*i], line, MAX_LINE_LENGTH);
 
-                number_of_lines += sizeof(char *);
-                char **temp = realloc(lines, number_of_lines);
-                if (temp == NULL) {
-                        fprintf(stderr, "Memory error encountered while reallocating\n");
-                        exit(EXIT_FAILURE);
-                }
-                lines = temp;
+		number_of_lines += sizeof(char *);
+		char **temp = realloc(lines, number_of_lines);
+		if (temp == NULL) {
+			fprintf(stderr, "Memory error encountered while reallocating\n");
+			exit(EXIT_FAILURE);
+		}
+		lines = temp;
 
-                (*i)++;
-        }
+		(*i)++;
+	}
 
-        fclose(fp);
+	fclose(fp);
 
-        return lines;
+	return lines;
 }
 
 // Verifies the length of the line
 void check_line_length(char *line)
 {
-        int line_length = strnlen(line, MAX_LINE_LENGTH);
+	int line_length = strnlen(line, MAX_LINE_LENGTH);
 
-        // printf("line length: %d\n", line_length);
+	// printf("line length: %d\n", line_length);
 
-        if (
-                (line_length == (MAX_LINE_LENGTH - 1)) &&
-                (line[MAX_LINE_LENGTH - 2] != '\n')) {
+	if (
+		(line_length == (MAX_LINE_LENGTH - 1)) &&
+		(line[MAX_LINE_LENGTH - 2] != '\n')) {
 
-                fprintf(stderr, "Input line length exceeded limit\n");
-                exit(EXIT_FAILURE);
-        }
+		fprintf(stderr, "Input line length exceeded limit\n");
+		exit(EXIT_FAILURE);
+	}
 }
 
 // Compares two lines
 int compare_lines(const void *a, const void *b)
 {
-        char *line_a = *(char **) a;
-        char *line_b = *(char **) b;
+	char *line_a = *(char **) a;
+	char *line_b = *(char **) b;
 
-        char *word_a = extract_nth_word(line_a);
-        char *word_b = extract_nth_word(line_b);
+	char *word_a = extract_nth_word(line_a);
+	char *word_b = extract_nth_word(line_b);
 
-        int result = strcmp(word_a, word_b);
-        
-        free(word_a);
-        free(word_b);
-        
-        return result;
+	int result = strcmp(word_a, word_b);
+	
+	free(word_a);
+	free(word_b);
+	
+	return result;
 }
 
 // Extract the nth word from a line
 char *extract_nth_word(const void *line)
 {
-        // Make a copy of the line
-        char temp[MAX_LINE_LENGTH];
-        strncpy(temp, line, MAX_LINE_LENGTH);
+	// Make a copy of the line
+	char temp[MAX_LINE_LENGTH];
+	strncpy(temp, line, MAX_LINE_LENGTH);
 
-        // Zero-initialize char array in the event no valid tokens
-        // are found
-        char *temp_word = calloc(MAX_WORD_LENGTH, sizeof(char));
-        if (temp_word == NULL) {
-                fprintf(stderr, "Memory error encountered\n");
-                exit(EXIT_FAILURE);
-        }
+	// Zero-initialize char array in the event no valid tokens
+	// are found
+	char *temp_word = calloc(MAX_WORD_LENGTH, sizeof(char));
+	if (temp_word == NULL) {
+		fprintf(stderr, "Memory error encountered\n");
+		exit(EXIT_FAILURE);
+	}
 
-        int i = -1;
-        char *token = strtok(temp, " \n");
+	int i = -1;
+	char *token = strtok(temp, " \n");
 
-        while (token != NULL) {
-                i++;
+	while (token != NULL) {
+		i++;
 
-                strncpy(temp_word, token, MAX_WORD_LENGTH);
-                if (i == (nth_word - 1)) {
-                        return temp_word;
-                }
+		strncpy(temp_word, token, MAX_WORD_LENGTH);
+		if (i == (nth_word - 1)) {
+			return temp_word;
+		}
 
-                token = strtok(NULL, " \n");
-        }
+		token = strtok(NULL, " \n");
+	}
 
-        return temp_word;
+	return temp_word;
 }
 
 
 // Print out stored lines
 void print_lines(char **lines, int line_i)
 {
-        int i = 0;
-        while (i < line_i) {
-                printf("line: %s", lines[i]);
-                i++;
-        }
+	int i = 0;
+	while (i < line_i) {
+		printf("line: %s", lines[i]);
+		i++;
+	}
 }
 
 // Frees memory allocated to hold lines
 void free_lines(char **lines, int line_i)
 {
-        int i = 0;
-        while (i < line_i) {
-                free(lines[i]);
-                i++;
-        }
-        free(lines);
+	int i = 0;
+	while (i < line_i) {
+		free(lines[i]);
+		i++;
+	}
+	free(lines);
 }
