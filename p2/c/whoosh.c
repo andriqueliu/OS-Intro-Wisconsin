@@ -30,7 +30,7 @@ char error_message[30] = "An error has occurred\n";
 
 // Function Prototypes
 
-char **parse_input(void);
+char **get_args(void);
 void print_args(char **args);
 void free_args(char **args);
 
@@ -38,21 +38,33 @@ void check_line_length(char *line);
 
 int check_built_in(char *command);
 
+void parse_command(char **args);
+
 void whoosh_exit();
 
 int main(int argc, char *argv[])
 {
-	// while (1) {
-	// 	printf("whoosh> ");
+	while (1) {
+		printf("whoosh> ");
 
-	// 	parse_input();
-	// }
+		// parse_input();
+
+		// get the line
+		// get the args from that line
+		// then, decide what program to run (built-in or otherwise)
+		char **args = get_args();
+		// print_args(args);
+		// free_args(args);
 
 
-	char **args = parse_input();
+		// decide the program
+		parse_command(args);
+		free_args(args);
+	}
 
-	print_args(args);
-	free_args(args);
+
+
+	
 
 
 
@@ -61,28 +73,25 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
-// has to result in a command, plus the list of its arguments...
-char **parse_input(void)
+
+
+// 
+char **get_args(void)
 {
-	// get the line from stdin
+	// Get input from stdin
 	char line[MAX_LINE_LENGTH + 2];
 	fgets(line, MAX_LINE_LENGTH + 2, stdin);
 	check_line_length(line);
 
-
-
-
-
-	// get the list of arguments, command included
+	// Initialze string array (guaranteed to store each argument)
 	char **args = malloc(MAX_LINE_LENGTH * sizeof(char *));
 
-	// Make a copy of the line
+	// Make a copy of the line, since strtok is destructive
 	char temp[MAX_LINE_LENGTH + 1];
 	strncpy(temp, line, MAX_LINE_LENGTH + 1);
 
 	int i = -1;
 	char *token = strtok(temp, " \n");
-
 	while (token != NULL) {
 		i++;
 
@@ -95,17 +104,11 @@ char **parse_input(void)
 		}
 
 		strncpy(temp_word, token, MAX_LINE_LENGTH);
-		// now, store that temp_word
 		args[i] = temp_word;
 
-
 		token = strtok(NULL, " \n");
-
-		// printf("%s\n", temp_word);
 	}
-
-	// Null-terminate the list of arguments
-	args[i + 1] = '\0';
+	args[i + 1] = '\0'; // Null-terminate the list of arguments
 
 	return args;
 }
@@ -132,37 +135,6 @@ void free_args(char **args)
 	free(args);
 }
 
-// // Extract the nth word from a line
-// char *extract_nth_word(const void *line)
-// {
-// 	// Make a copy of the line
-// 	char temp[MAX_LINE_LENGTH];
-// 	strncpy(temp, line, MAX_LINE_LENGTH);
-
-// 	// Zero-initialize char array in the event no valid tokens
-// 	// are found
-// 	char *temp_word = calloc(MAX_WORD_LENGTH, sizeof(char));
-// 	if (temp_word == NULL) {
-// 		fprintf(stderr, "Memory error encountered\n");
-// 		exit(EXIT_FAILURE);
-// 	}
-
-// 	int i = -1;
-// 	char *token = strtok(temp, " \n");
-
-// 	while (token != NULL) {
-// 		i++;
-
-// 		strncpy(temp_word, token, MAX_WORD_LENGTH);
-// 		if (i == (nth_word - 1)) {
-// 			return temp_word;
-// 		}
-
-// 		token = strtok(NULL, " \n");
-// 	}
-
-// 	return temp_word;
-// }
 
 
 void check_line_length(char *line)
@@ -191,6 +163,22 @@ int check_built_in(char *command)
 		}
 	}
 	return FALSE;
+}
+
+// 
+void parse_command(char **args)
+{
+	char *command = args[0];
+
+	if (strcmp(command, "exit") == 0) {
+		free_args(args);
+		whoosh_exit();
+	} else {
+		printf("Sorry dude, no command found\n");
+	}
+
+
+	
 }
 
 // ??? for the IMPLEMENTED functions, should
