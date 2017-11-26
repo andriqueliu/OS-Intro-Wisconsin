@@ -36,11 +36,16 @@ void free_args(char **args);
 
 void check_line_length(char *line);
 
-int check_built_in(char *command);
 
 void parse_command(char **args);
 
 void whoosh_exit();
+void whoosh_cd();
+void whoosh_pwd();
+void whoosh_path();
+
+void whoosh_error();
+
 
 int main(int argc, char *argv[])
 {
@@ -122,6 +127,7 @@ void print_args(char **args)
 	}
 }
 
+// 
 void free_args(char **args)
 {
 	// Free each argument
@@ -136,33 +142,12 @@ void free_args(char **args)
 }
 
 
-
+// Ensure that line length is supported
 void check_line_length(char *line)
 {
 	if (strnlen(line, MAX_LINE_LENGTH + 2) > MAX_LINE_LENGTH) {
-		// print error and exit
-		printf("oh no temporary error message\n");
+		whoosh_error();
 	}
-}
-
-// maybe modify this? just pass the cmd and args directly,
-// no need to return and act?
-// Check if command is built-in
-int check_built_in(char *command)
-{
-	char *built_ins[] = {
-		"exit",
-		"cd",
-		"pwd",
-		"path"
-	};
-
-	for (int i = 0; i < BUILT_INS; i++) {
-		if (strcmp(command, built_ins[i]) == 0) {
-			return TRUE;
-		}
-	}
-	return FALSE;
 }
 
 // 
@@ -173,12 +158,18 @@ void parse_command(char **args)
 	if (strcmp(command, "exit") == 0) {
 		free_args(args);
 		whoosh_exit();
+	} else if (strcmp(command, "cd") == 0) {
+		printf("cd\n");
+	} else if (strcmp(command, "pwd") == 0) {
+		printf("pwd\n");
+	} else if (strcmp(command, "path") == 0) {
+		printf("path\n");
 	} else {
 		printf("Sorry dude, no command found\n");
 	}
 
 
-	
+
 }
 
 // ??? for the IMPLEMENTED functions, should
@@ -187,16 +178,16 @@ void parse_command(char **args)
 
 void whoosh_exit()
 {
-	// write(STDERR_FILENO, error_message, strlen(error_message));
-	// execv... call the system exit() method
 	exit(0);
 }
 
+// 
 void whoosh_cd()
 {
 
 }
 
+// 
 void whoosh_pwd()
 {
 
@@ -206,6 +197,13 @@ void whoosh_pwd()
 void whoosh_path()
 {
 
+}
+
+// 
+void whoosh_error()
+{
+	write(STDERR_FILENO, error_message, strlen(error_message));
+	whoosh_exit();
 }
 
 // also have to implement
