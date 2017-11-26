@@ -28,6 +28,7 @@
 char error_message[30] = "An error has occurred\n";
 
 
+
 // Function Prototypes
 
 char **get_args(void);
@@ -46,34 +47,23 @@ void whoosh_path();
 
 void whoosh_error();
 
+// !!! maybe use a global to point to the args?
+// so if you have to exit, make sure to free the args
+// ^TODO: make sure args are freed correctly
 
 int main(int argc, char *argv[])
 {
 	while (1) {
 		printf("whoosh> ");
 
-		// parse_input();
 
 		// get the line
 		// get the args from that line
 		// then, decide what program to run (built-in or otherwise)
 		char **args = get_args();
-		// print_args(args);
-		// free_args(args);
-
-
-		// decide the program
 		parse_command(args);
 		free_args(args);
 	}
-
-
-
-	
-
-
-
-	// whoosh_exit();
 
 	return EXIT_SUCCESS;
 }
@@ -122,7 +112,7 @@ void print_args(char **args)
 {
 	int i = 0;
 	while (args[i] != '\0') {
-		printf("String: %s\n", args[i]);
+		printf("argument: %s\n", args[i]);
 		i++;
 	}
 }
@@ -159,6 +149,8 @@ void parse_command(char **args)
 		free_args(args);
 		whoosh_exit();
 	} else if (strcmp(command, "cd") == 0) {
+		// maybe pass args into everything and if an error is found,
+		// free the args
 		printf("cd\n");
 	} else if (strcmp(command, "pwd") == 0) {
 		printf("pwd\n");
@@ -166,28 +158,26 @@ void parse_command(char **args)
 		printf("path\n");
 	} else {
 		printf("Sorry dude, no command found\n");
+		// use other builtin.....
 	}
 
 
 
 }
 
-// ??? for the IMPLEMENTED functions, should
-// wait, execv, etc. be used?
-// Probably not...
-
+// Exit the program
 void whoosh_exit()
 {
 	exit(0);
 }
 
-// 
+// Change directories
 void whoosh_cd()
 {
 
 }
 
-// 
+// Print working directory
 void whoosh_pwd()
 {
 
@@ -199,19 +189,11 @@ void whoosh_path()
 
 }
 
-// 
+// Print an error message and exit the program
 void whoosh_error()
 {
 	write(STDERR_FILENO, error_message, strlen(error_message));
 	whoosh_exit();
 }
-
-// also have to implement
-// pwd and path... the rest, just check
-// if the command is a built-in command
-
-// ^ jk... if it's... exit, cd, pwd, or path...
-// then don't create a new process. Just use the built in.
-// Else, create a new process to run the command/program
 
 
